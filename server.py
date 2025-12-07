@@ -10,19 +10,23 @@ def emo_detector():
 
     # Pass the text to the emotion_detector function and store the response
     emotion_scores = emotion_detector(text_to_analyze)
-    emotion_text = ", ".join(
+
+    # error handling
+    if all(value is None for value in emotion_scores.values()):
+        formatted_response = "Invalid text! Please try again!"
+    else:
+        dominant_emotion = max(emotion_scores, key=emotion_scores.get)
+        # Extract the formatted response
+        emotion_text = ", ".join(
         [f"'{emo}': {score:.9f}" for emo, score in emotion_scores.items()]
     )
-    dominant_emotion = max(emotion_scores, key=emotion_scores.get)
+        formatted_response = (
+            f"For the given statement, "
+            f"the system response is {emotion_text}. "
+            f"The dominant emotion is {dominant_emotion}."
+        )
 
-    # Extract the formatted response
-    formatted_response = (
-        f"For the given statement, "
-        f"the system response is {emotion_text}. "
-        f"The dominant emotion is {dominant_emotion}."
-    )
-
-    # Return a formatted string with the emotion score and dominant emotion
+        # Return a formatted string with the emotion score and dominant emotion
     return formatted_response
 
 @app.route("/")
@@ -30,4 +34,4 @@ def render_index_page():
     return render_template('index.html')
 
 if __name__ == "__main__":
-    app.run(host="0.0.0.0", port=5001)
+    app.run(host="0.0.0.0", port=5004)
